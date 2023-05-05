@@ -28,7 +28,11 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
                 position?: 'left' | 'right';
             };
             smooth?: boolean;
-            legend?: boolean;
+            legend?: {
+                show?: boolean;
+                scroll?: boolean;
+                position?: 'top' | 'bottom' | 'left' | 'right';
+            };
             showSymbol?: boolean;
             showDataLabels?: boolean;
             percentage?: boolean;

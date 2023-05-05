@@ -162,8 +162,20 @@ export default class ScomLineChart extends Module implements PageBlock {
                   type: 'boolean'
                 },
                 legend: {
-                  type: 'boolean',
-                  title: 'Show Chart Legend'
+                  type: 'object',
+                  title: 'Show Chart Legend',
+                  properties: {
+                    show: {
+                      type: 'boolean'
+                    },
+                    scroll: {
+                      type: 'boolean'
+                    },
+                    position: {
+                      type: 'string',
+                      enum: ['top', 'bottom', 'left', 'right']
+                    }
+                  }
                 },
                 showSymbol: {
                   type: 'boolean'
@@ -391,6 +403,18 @@ export default class ScomLineChart extends Module implements PageBlock {
     this.pnlChart.height = `calc(100% - ${this.vStackInfo.offsetHeight + 10}px)`;
     const { xColumn, yColumns, groupBy, seriesOptions, smooth, stacking, legend, showSymbol, showDataLabels, percentage, xAxis, yAxis } = options;
     const { key, type } = xColumn;
+    let _legend = {
+      show: legend?.show,
+    }
+    if (legend?.position) {
+      _legend[legend.position] = 'auto';
+      if (['left', 'right'].includes(legend.position)) {
+        _legend['orient'] = 'vertical';
+      }
+    }
+    if (legend?.scroll) {
+      _legend['type'] = 'scroll';
+    }
     let _series = [];
     let arr = this.chartData;
     const item = (arr && arr[0]) || {};
@@ -535,9 +559,7 @@ export default class ScomLineChart extends Module implements PageBlock {
           }
         }
       },
-      legend: {
-        show: legend
-      },
+      legend: _legend,
       xAxis: {
         type: type,
         boundaryGap: false,
