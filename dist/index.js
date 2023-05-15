@@ -189,7 +189,7 @@ define("@scom/scom-line-chart/data.json.ts", ["require", "exports"], function (r
     ///<amd-module name='@scom/scom-line-chart/data.json.ts'/> 
     exports.default = {
         defaultBuilderData: {
-            apiEndpoint: 'https://api.dune.com/api/v1/query/2360905/results?api_key=324WhvsCHWCji2pkgtfa0JDqDu8j0FdD',
+            apiEndpoint: "/dune/query/2360905",
             options: {
                 title: 'ETH Withdrawals after Shanghai Unlock vs ETH price',
                 options: {
