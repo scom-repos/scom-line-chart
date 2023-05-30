@@ -17,31 +17,29 @@ export default class Module1 extends Module {
                 margin={{ left: 'auto', right: 'auto' }}
                 data={{
                     apiEndpoint: "/dune/query/2360905",
+                    title: 'ETH Withdrawals after Shanghai Unlock vs ETH price',
                     options: {
-                        title: 'ETH Withdrawals after Shanghai Unlock vs ETH price',
-                        options: {
-                            xColumn: {
-                                key: 'time',
-                                type: 'time'
-                            },
-                            yColumns: [
-                                'eth_price',
-                            ],
-                            seriesOptions: [
-                                {
-                                    key: 'eth_price',
-                                    title: 'ETH Price',
-                                    color: '#000'
-                                }
-                            ],
-                            xAxis: {
-                                title: 'Date',
-                                tickFormat: 'MMM DD'
-                            },
-                            yAxis: {
-                                labelFormat: '0,000.00$',
-                                position: 'left'
+                        xColumn: {
+                            key: 'time',
+                            type: 'time'
+                        },
+                        yColumns: [
+                            'eth_price',
+                        ],
+                        seriesOptions: [
+                            {
+                                key: 'eth_price',
+                                title: 'ETH Price',
+                                color: '#000'
                             }
+                        ],
+                        xAxis: {
+                            title: 'Date',
+                            tickFormat: 'MMM DD'
+                        },
+                        yAxis: {
+                            labelFormat: '0,000.00$',
+                            position: 'left'
                         }
                     }
                 }}
