@@ -1,45 +1,43 @@
 /// <amd-module name="@scom/scom-line-chart/global/interfaces.ts" />
 declare module "@scom/scom-line-chart/global/interfaces.ts" {
     export interface ILineChartOptions {
-        title: string;
-        description?: string;
-        options: {
-            xColumn: {
-                key: string;
-                type: 'time' | 'category';
-            };
-            yColumns: string[];
-            groupBy?: string;
-            seriesOptions?: {
-                key: string;
-                title?: string;
-                color?: string;
-            }[];
-            stacking?: boolean;
-            xAxis?: {
-                title?: string;
-                tickFormat?: string;
-                reverseValues?: boolean;
-            };
-            yAxis?: {
-                title?: string;
-                tickFormat?: string;
-                labelFormat?: string;
-                position?: 'left' | 'right';
-            };
-            smooth?: boolean;
-            legend?: {
-                show?: boolean;
-                scroll?: boolean;
-                position?: 'top' | 'bottom' | 'left' | 'right';
-            };
-            showSymbol?: boolean;
-            showDataLabels?: boolean;
-            percentage?: boolean;
+        xColumn?: {
+            key: string;
+            type: 'time' | 'category';
         };
+        yColumns?: string[];
+        groupBy?: string;
+        seriesOptions?: {
+            key: string;
+            title?: string;
+            color?: string;
+        }[];
+        stacking?: boolean;
+        xAxis?: {
+            title?: string;
+            tickFormat?: string;
+            reverseValues?: boolean;
+        };
+        yAxis?: {
+            title?: string;
+            tickFormat?: string;
+            labelFormat?: string;
+            position?: 'left' | 'right';
+        };
+        smooth?: boolean;
+        legend?: {
+            show?: boolean;
+            scroll?: boolean;
+            position?: 'top' | 'bottom' | 'left' | 'right';
+        };
+        showSymbol?: boolean;
+        showDataLabels?: boolean;
+        percentage?: boolean;
     }
     export interface ILineChartConfig {
         apiEndpoint: string;
+        title: string;
+        description?: string;
         options: ILineChartOptions;
     }
 }
@@ -109,27 +107,25 @@ declare module "@scom/scom-line-chart/data.json.ts" {
     const _default_1: {
         defaultBuilderData: {
             apiEndpoint: string;
+            title: string;
             options: {
-                title: string;
-                options: {
-                    xColumn: {
-                        key: string;
-                        type: string;
-                    };
-                    yColumns: string[];
-                    seriesOptions: {
-                        key: string;
-                        title: string;
-                        color: string;
-                    }[];
-                    xAxis: {
-                        title: string;
-                        tickFormat: string;
-                    };
-                    yAxis: {
-                        labelFormat: string;
-                        position: string;
-                    };
+                xColumn: {
+                    key: string;
+                    type: string;
+                };
+                yColumns: string[];
+                seriesOptions: {
+                    key: string;
+                    title: string;
+                    color: string;
+                }[];
+                xAxis: {
+                    title: string;
+                    tickFormat: string;
+                };
+                yAxis: {
+                    labelFormat: string;
+                    position: string;
                 };
             };
         };
@@ -172,6 +168,8 @@ declare module "@scom/scom-line-chart" {
         private getTag;
         private setTag;
         private getPropertiesSchema;
+        private getGeneralSchema;
+        private getAdvanceSchema;
         private getThemeSchema;
         private _getActions;
         getConfigurators(): ({
