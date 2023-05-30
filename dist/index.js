@@ -538,7 +538,7 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
             if (advancedSchema) {
                 const advanced = {
                     name: 'Advanced',
-                    icon: 'cog',
+                    icon: 'sliders-h',
                     command: (builder, userInputData) => {
                         let _oldData = {};
                         return {
