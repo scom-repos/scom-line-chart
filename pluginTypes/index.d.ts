@@ -50,7 +50,7 @@ declare module "@scom/scom-line-chart/global/utils.ts" {
     }) => any;
     export const formatNumberByFormat: (num: number, format: string, separators?: boolean) => any;
     export const formatNumberWithSeparators: (value: number, precision?: number) => string;
-    export const groupArrayByKey: (arr: [Date | string, string | number][]) => any[];
+    export const groupArrayByKey: (arr: [Date | string, string | number][]) => (string | number | Date)[][];
     export const groupByCategory: (data: {
         [key: string]: any;
     }[], category: string, xAxis: string, yAxis: string) => {
