@@ -137,6 +137,7 @@ declare module "@scom/scom-line-chart" {
     import { Module, ControlElement, Container, IDataSchema } from '@ijstech/components';
     import { ILineChartConfig } from "@scom/scom-line-chart/global/index.ts";
     interface ScomLineChartElement extends ControlElement {
+        lazyLoad?: boolean;
         data: ILineChartConfig;
     }
     global {
