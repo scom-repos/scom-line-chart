@@ -1,5 +1,6 @@
 /// <amd-module name="@scom/scom-line-chart/global/interfaces.ts" />
 declare module "@scom/scom-line-chart/global/interfaces.ts" {
+    import { ModeType } from "@scom/scom-chart-data-source-setup";
     export interface ILineChartOptions {
         xColumn?: {
             key: string;
@@ -35,10 +36,15 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
         percentage?: boolean;
     }
     export interface ILineChartConfig {
-        apiEndpoint: string;
+        apiEndpoint?: string;
         title: string;
         description?: string;
         options: ILineChartOptions;
+        file?: {
+            cid?: string;
+            name?: string;
+        };
+        mode: ModeType;
     }
 }
 /// <amd-module name="@scom/scom-line-chart/global/utils.ts" />
@@ -134,7 +140,7 @@ declare module "@scom/scom-line-chart/data.json.ts" {
 }
 /// <amd-module name="@scom/scom-line-chart" />
 declare module "@scom/scom-line-chart" {
-    import { Module, ControlElement, Container, IDataSchema } from '@ijstech/components';
+    import { Module, ControlElement, Container, IDataSchema, VStack } from '@ijstech/components';
     import { ILineChartConfig } from "@scom/scom-line-chart/global/index.ts";
     interface ScomLineChartElement extends ControlElement {
         lazyLoad?: boolean;
@@ -184,6 +190,19 @@ declare module "@scom/scom-line-chart" {
                     undo: () => void;
                     redo: () => void;
                 };
+                customUI: {
+                    render: (data?: any, onConfirm?: (result: boolean, data: any) => void) => VStack;
+                };
+                userInputDataSchema?: undefined;
+                userInputUISchema?: undefined;
+            } | {
+                name: string;
+                icon: string;
+                command: (builder: any, userInputData: any) => {
+                    execute: () => Promise<void>;
+                    undo: () => void;
+                    redo: () => void;
+                };
                 userInputDataSchema: IDataSchema;
                 userInputUISchema: {
                     type: string;
@@ -208,6 +227,7 @@ declare module "@scom/scom-line-chart" {
                         title?: undefined;
                     })[];
                 };
+                customUI?: undefined;
             } | {
                 name: string;
                 icon: string;
@@ -217,6 +237,7 @@ declare module "@scom/scom-line-chart" {
                     redo: () => void;
                 };
                 userInputDataSchema: IDataSchema;
+                customUI?: undefined;
                 userInputUISchema?: undefined;
             })[];
             getData: any;
@@ -236,6 +257,19 @@ declare module "@scom/scom-line-chart" {
                     undo: () => void;
                     redo: () => void;
                 };
+                customUI: {
+                    render: (data?: any, onConfirm?: (result: boolean, data: any) => void) => VStack;
+                };
+                userInputDataSchema?: undefined;
+                userInputUISchema?: undefined;
+            } | {
+                name: string;
+                icon: string;
+                command: (builder: any, userInputData: any) => {
+                    execute: () => Promise<void>;
+                    undo: () => void;
+                    redo: () => void;
+                };
                 userInputDataSchema: IDataSchema;
                 userInputUISchema: {
                     type: string;
@@ -260,6 +294,7 @@ declare module "@scom/scom-line-chart" {
                         title?: undefined;
                     })[];
                 };
+                customUI?: undefined;
             } | {
                 name: string;
                 icon: string;
@@ -269,6 +304,7 @@ declare module "@scom/scom-line-chart" {
                     redo: () => void;
                 };
                 userInputDataSchema: IDataSchema;
+                customUI?: undefined;
                 userInputUISchema?: undefined;
             })[];
             getLinkParams: () => {
@@ -284,6 +320,8 @@ declare module "@scom/scom-line-chart" {
         private updateTheme;
         private onUpdateBlock;
         private updateChartData;
+        private renderSnapshotData;
+        private renderLiveData;
         private renderChart;
         private resizeChart;
         init(): Promise<void>;

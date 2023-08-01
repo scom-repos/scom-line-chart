@@ -11,12 +11,14 @@ import {
   Styles,
   Panel,
   LineChart,
-  moment
+  moment,
+  Button
 } from '@ijstech/components';
 import { ILineChartConfig, callAPI, formatNumber, groupByCategory, extractUniqueTimes, concatUnique, groupArrayByKey, formatNumberByFormat, ILineChartOptions } from './global/index';
 import { chartStyle, containerStyle } from './index.css';
 import assets from './assets';
 import configData from './data.json';
+import ScomChartDataSourceSetup, { ModeType, fetchContentByCID } from '@scom/scom-chart-data-source-setup';
 const Theme = Styles.Theme.ThemeVars;
 const currentTheme = Styles.Theme.currentTheme;
 
@@ -159,7 +161,7 @@ export default class ScomLineChart extends Module {
   private chartData: { [key: string]: string | number }[] = [];
   private apiEndpoint = '';
 
-  private _data: ILineChartConfig = { apiEndpoint: '', title: '', options: undefined };
+  private _data: ILineChartConfig = { apiEndpoint: '', title: '', options: undefined, mode: ModeType.LIVE };
   tag: any = {};
   defaultEdit: boolean = true;
   readonly onConfirm: () => Promise<void>;
@@ -205,11 +207,11 @@ export default class ScomLineChart extends Module {
     const propertiesSchema = {
       type: 'object',
       properties: {
-        apiEndpoint: {
-          type: 'string',
-          title: 'API Endpoint',
-          required: true
-        },
+        // apiEndpoint: {
+        //   type: 'string',
+        //   title: 'API Endpoint',
+        //   required: true
+        // },
         title: {
           type: 'string',
           required: true
@@ -226,11 +228,11 @@ export default class ScomLineChart extends Module {
   private getGeneralSchema() {
     const propertiesSchema = {
       type: 'object',
-      required: ['apiEndpoint', 'title'],
+      required: ['title'],
       properties: {
-        apiEndpoint: {
-          type: 'string'
-        },
+        // apiEndpoint: {
+        //   type: 'string'
+        // },
         title: {
           type: 'string'
         },
@@ -281,10 +283,67 @@ export default class ScomLineChart extends Module {
   private _getActions(propertiesSchema: IDataSchema, themeSchema: IDataSchema, advancedSchema?: IDataSchema) {
     const actions = [
       {
+        name: 'Data Source',
+        icon: 'database',
+        command: (builder: any, userInputData: any) => {
+          let _oldData: ILineChartConfig = { apiEndpoint: '', title: '', options: undefined, mode: ModeType.LIVE };
+          return {
+            execute: async () => {
+              _oldData = { ...this._data };
+              if (userInputData?.mode) this._data.mode = userInputData?.mode;
+              if (userInputData?.file) this._data.file = userInputData?.file;
+              if (userInputData?.apiEndpoint) this._data.apiEndpoint = userInputData?.apiEndpoint;
+              if (builder?.setData) builder.setData(this._data);
+              this.setData(this._data);
+            },
+            undo: () => {
+              if (builder?.setData) builder.setData(_oldData);
+              this.setData(_oldData);
+            },
+            redo: () => { }
+          }
+        },
+        customUI: {
+          render: (data?: any, onConfirm?: (result: boolean, data: any) => void) => {
+            const vstack = new VStack(null, {gap: '1rem'});
+            const config = new ScomChartDataSourceSetup(null, {...this._data, chartData: JSON.stringify(this.chartData)});
+            const hstack = new HStack(null, {
+              verticalAlignment: 'center',
+              horizontalAlignment: 'end'
+            });
+            const button = new Button(null, {
+              caption: 'Confirm',
+              width: 'auto',
+              height: 40,
+              font: {color: Theme.colors.primary.contrastText}
+            });
+            hstack.append(button);
+            vstack.append(config);
+            vstack.append(hstack);
+            button.onClick = async () => {
+              const { apiEndpoint, file, mode } = config.data;
+              if (mode === 'Live') {
+                if (!apiEndpoint) return;
+                this._data.apiEndpoint = apiEndpoint;
+                this.updateChartData();
+              } else {
+                if (!file?.cid) return;
+                this.chartData = config.data.chartData ? JSON.parse(config.data.chartData) : []
+                this.onUpdateBlock();
+              }
+              if (onConfirm) {
+                onConfirm(true, {...this._data, apiEndpoint, file, mode});
+              }
+            }
+            return vstack;
+          }
+        }
+      },
+      {
         name: 'Settings',
         icon: 'cog',
         command: (builder: any, userInputData: any) => {
-          let _oldData: ILineChartConfig = { apiEndpoint: '', title: '', options: undefined };
+          let _oldData: ILineChartConfig = { apiEndpoint: '', title: '', options: undefined, mode: ModeType.LIVE };
           return {
             execute: async () => {
               _oldData = { ...this._data };
@@ -468,6 +527,28 @@ export default class ScomLineChart extends Module {
   }
 
   private async updateChartData() {
+    this.loadingElm.visible = true;
+    if (this._data?.mode === ModeType.SNAPSHOT)
+      await this.renderSnapshotData();
+    else
+      await this.renderLiveData();
+    this.loadingElm.visible = false;
+  }
+
+  private async renderSnapshotData() {
+    if (this._data.file?.cid) {
+      const data = await fetchContentByCID(this._data.file.cid);
+      if (data) {
+        this.chartData = data;
+        this.onUpdateBlock();
+        return;
+      }
+    }
+    this.chartData = [];
+    this.onUpdateBlock();
+  }
+
+  private async renderLiveData() {
     if (this._data.apiEndpoint === this.apiEndpoint) {
       this.onUpdateBlock();
       return;
@@ -475,14 +556,15 @@ export default class ScomLineChart extends Module {
     const apiEndpoint = this._data.apiEndpoint;
     this.apiEndpoint = apiEndpoint;
     if (apiEndpoint) {
-      this.loadingElm.visible = true;
-      const data = await callAPI(apiEndpoint);
-      this.loadingElm.visible = false;
-      if (data && this._data.apiEndpoint === apiEndpoint) {
-        this.chartData = data;
-        this.onUpdateBlock();
-        return;
-      }
+      let data = null
+      try {
+        data = await callAPI(apiEndpoint);
+        if (data && this._data.apiEndpoint === apiEndpoint) {
+          this.chartData = data;
+          this.onUpdateBlock();
+          return;
+        }
+      } catch {}
     }
     this.chartData = [];
     this.onUpdateBlock();

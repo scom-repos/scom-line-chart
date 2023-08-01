@@ -1,3 +1,5 @@
+import { ModeType } from "@scom/scom-chart-data-source-setup"
+
 export interface ILineChartOptions {
   xColumn?: {
     key: string,
@@ -34,8 +36,13 @@ export interface ILineChartOptions {
 }
 
 export interface ILineChartConfig {
-  apiEndpoint: string,
+  apiEndpoint?: string,
   title: string,
   description?: string,
-  options: ILineChartOptions
+  options: ILineChartOptions,
+  file?: {
+    cid?: string,
+    name?: string
+  },
+  mode: ModeType
 }
