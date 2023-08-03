@@ -161,7 +161,6 @@ declare module "@scom/scom-line-chart" {
         private lbTitle;
         private lbDescription;
         private chartData;
-        private apiEndpoint;
         private _data;
         tag: any;
         defaultEdit: boolean;
