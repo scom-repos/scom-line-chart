@@ -184,6 +184,7 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                 properties: {
                     options: {
                         type: string;
+                        title: string;
                         properties: {
                             xColumn: {
                                 type: string;
@@ -302,12 +303,15 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                 type: string;
                 elements: {
                     type: string;
-                    scope: string;
-                    options: {
-                        detail: {
-                            type: string;
+                    elements: {
+                        type: string;
+                        scope: string;
+                        options: {
+                            detail: {
+                                type: string;
+                            };
                         };
-                    };
+                    }[];
                 }[];
             };
         };
@@ -347,6 +351,7 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                     };
                     options: {
                         type: string;
+                        title: string;
                         properties: {
                             xColumn: {
                                 type: string;
