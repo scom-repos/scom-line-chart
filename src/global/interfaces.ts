@@ -36,7 +36,8 @@ export interface ILineChartOptions {
 }
 
 export interface ILineChartConfig {
-  apiEndpoint?: string,
+  dataSource: string;
+  queryId: string;
   title: string,
   description?: string,
   options: ILineChartOptions,

@@ -1,6 +1,8 @@
 export default {
   defaultBuilderData: {
-    apiEndpoint: "/dune/query/2360905",
+    // apiEndpoint: "/dune/query/2360905",
+    "dataSource": "Dune",
+    "queryId": "2360905",
     title: 'ETH Withdrawals after Shanghai Unlock vs ETH price',
     options: {
       xColumn: {
