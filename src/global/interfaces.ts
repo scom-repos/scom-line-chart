@@ -37,7 +37,8 @@ export interface ILineChartOptions {
 
 export interface ILineChartConfig {
   dataSource: string;
-  queryId: string;
+  queryId?: string;
+  apiEndpoint?: string;
   title: string,
   description?: string,
   options: ILineChartOptions,
@@ -46,4 +47,10 @@ export interface ILineChartConfig {
     name?: string
   },
   mode: ModeType
+}
+
+export interface IFetchDataOptions {
+  dataSource: string;
+  queryId?: string;
+  apiEndpoint?: string;
 }
