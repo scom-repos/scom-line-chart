@@ -37,7 +37,8 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
     }
     export interface ILineChartConfig {
         dataSource: string;
-        queryId: string;
+        queryId?: string;
+        apiEndpoint?: string;
         title: string;
         description?: string;
         options: ILineChartOptions;
@@ -47,9 +48,15 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
         };
         mode: ModeType;
     }
+    export interface IFetchDataOptions {
+        dataSource: string;
+        queryId?: string;
+        apiEndpoint?: string;
+    }
 }
 /// <amd-module name="@scom/scom-line-chart/global/utils.ts" />
 declare module "@scom/scom-line-chart/global/utils.ts" {
+    import { IFetchDataOptions } from "@scom/scom-line-chart/global/interfaces.ts";
     export const formatNumber: (num: number, options?: {
         format?: string;
         decimals?: number;
@@ -73,26 +80,10 @@ declare module "@scom/scom-line-chart/global/utils.ts" {
     }, obj2: {
         [key: string]: any;
     }) => {};
-    export const callAPI: (dataSource: string, queryId: string) => Promise<any>;
+    export const callAPI: (options: IFetchDataOptions) => Promise<any>;
 }
 /// <amd-module name="@scom/scom-line-chart/global/index.ts" />
 declare module "@scom/scom-line-chart/global/index.ts" {
-    export interface PageBlock {
-        getData: () => any;
-        setData: (data: any) => Promise<void>;
-        getTag: () => any;
-        setTag: (tag: any) => Promise<void>;
-        validate?: () => boolean;
-        defaultEdit?: boolean;
-        tag?: any;
-        readonly onEdit: () => Promise<void>;
-        readonly onConfirm: () => Promise<void>;
-        readonly onDiscard: () => Promise<void>;
-        edit: () => Promise<void>;
-        confirm: () => Promise<void>;
-        discard: () => Promise<void>;
-        config: () => Promise<void>;
-    }
     export * from "@scom/scom-line-chart/global/interfaces.ts";
     export * from "@scom/scom-line-chart/global/utils.ts";
 }
