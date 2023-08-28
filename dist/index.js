@@ -66,13 +66,16 @@ define("@scom/scom-line-chart/global/utils.ts", ["require", "exports", "@scom/sc
         if (absNum < 0.001) {
             return (0, exports.formatNumberWithSeparators)(num, { precision: 4 });
         }
+        if (absNum < 1) {
+            return (0, exports.formatNumberWithSeparators)(num, { precision: 4 });
+        }
         return (0, exports.formatNumberWithSeparators)(num, { precision: 2 });
     };
     exports.formatNumber = formatNumber;
     const formatNumberByFormat = (num, format, separators) => {
         if (!format)
             return (0, exports.formatNumberWithSeparators)(num, { precision: 0 });
-        const decimalPlaces = format.split('.')[1] ? format.split('.').length : 0;
+        const decimalPlaces = format.split('.')[1] ? format.split('.')[1].length : 0;
         if (format.includes('%')) {
             return (0, exports.formatNumberWithSeparators)((num * 100), { precision: decimalPlaces }) + '%';
         }
