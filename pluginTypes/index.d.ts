@@ -53,16 +53,11 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
         precision?: number;
         roundingMode?: BigNumber.RoundingMode;
     }
-    export interface IFetchDataOptions {
-        dataSource: string;
-        queryId?: string;
-        apiEndpoint?: string;
-    }
 }
 /// <amd-module name="@scom/scom-line-chart/global/utils.ts" />
 declare module "@scom/scom-line-chart/global/utils.ts" {
     import { BigNumber } from '@ijstech/eth-wallet';
-    import { IFormatNumberOptions, IFetchDataOptions } from "@scom/scom-line-chart/global/interfaces.ts";
+    import { IFormatNumberOptions } from "@scom/scom-line-chart/global/interfaces.ts";
     export const isNumeric: (value: string | number | BigNumber) => boolean;
     export const formatNumber: (num: number, options?: {
         format?: string;
@@ -87,7 +82,6 @@ declare module "@scom/scom-line-chart/global/utils.ts" {
     }, obj2: {
         [key: string]: any;
     }) => {};
-    export const callAPI: (options: IFetchDataOptions) => Promise<any>;
 }
 /// <amd-module name="@scom/scom-line-chart/global/index.ts" />
 declare module "@scom/scom-line-chart/global/index.ts" {
@@ -140,7 +134,7 @@ declare module "@scom/scom-line-chart/data.json.ts" {
 }
 /// <amd-module name="@scom/scom-line-chart/formSchema.ts" />
 declare module "@scom/scom-line-chart/formSchema.ts" {
-    export function getBuilderSchema(): {
+    export function getBuilderSchema(columns: string[]): {
         dataSchema: {
             type: string;
             required: string[];
@@ -196,6 +190,7 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                                 properties: {
                                     key: {
                                         type: string;
+                                        enum: string[];
                                         required: boolean;
                                     };
                                     type: {
@@ -211,10 +206,12 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                                 required: boolean;
                                 items: {
                                     type: string;
+                                    enum: string[];
                                 };
                             };
                             groupBy: {
                                 type: string;
+                                enum: string[];
                             };
                             smooth: {
                                 type: string;
@@ -319,7 +316,7 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
             };
         };
     };
-    export function getEmbedderSchema(): {
+    export function getEmbedderSchema(columns: string[]): {
         dataSchema: {
             type: string;
             properties: {
@@ -355,6 +352,7 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                             properties: {
                                 key: {
                                     type: string;
+                                    enum: string[];
                                     required: boolean;
                                 };
                                 type: {
@@ -370,10 +368,12 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                             required: boolean;
                             items: {
                                 type: string;
+                                enum: string[];
                             };
                         };
                         groupBy: {
                             type: string;
+                            enum: string[];
                         };
                         smooth: {
                             type: string;
@@ -546,6 +546,7 @@ declare module "@scom/scom-line-chart" {
         private loadingElm;
         private lbTitle;
         private lbDescription;
+        private columnNames;
         private chartData;
         private _data;
         tag: any;
