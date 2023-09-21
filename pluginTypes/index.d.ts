@@ -57,7 +57,6 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
 /// <amd-module name="@scom/scom-line-chart/global/utils.ts" />
 declare module "@scom/scom-line-chart/global/utils.ts" {
     import { BigNumber } from '@ijstech/eth-wallet';
-    import { IFormatNumberOptions } from "@scom/scom-line-chart/global/interfaces.ts";
     export const isNumeric: (value: string | number | BigNumber) => boolean;
     export const formatNumber: (num: number, options?: {
         format?: string;
@@ -65,7 +64,6 @@ declare module "@scom/scom-line-chart/global/utils.ts" {
         percentValues?: boolean;
     }) => any;
     export const formatNumberByFormat: (num: number, format: string, separators?: boolean) => any;
-    export const formatNumberWithSeparators: (value: number | string | BigNumber, options: IFormatNumberOptions) => string;
     export const groupArrayByKey: (arr: [Date | string, string | number][]) => (string | number | Date)[][];
     export const groupByCategory: (data: {
         [key: string]: any;
