@@ -4,7 +4,8 @@ import { ModeType } from "@scom/scom-chart-data-source-setup"
 export interface ILineChartOptions {
   xColumn?: {
     key: string,
-    type: 'time' | 'category'
+    type: 'time' | 'category',
+    timeFormat?: string
   },
   yColumns?: string[],
   groupBy?: string,
@@ -16,11 +17,13 @@ export interface ILineChartOptions {
   stacking?: boolean,
   xAxis?: {
     title?: string,
+    fontColor?: string,
     tickFormat?: string,
     reverseValues?: boolean
   },
   yAxis?: {
     title?: string,
+    fontColor?: string,
     tickFormat?: string,
     labelFormat?: string,
     position?: 'left' | 'right'
@@ -28,6 +31,7 @@ export interface ILineChartOptions {
   smooth?: boolean,
   legend?: {
     show?: boolean,
+    fontColor?: string,
     scroll?: boolean,
     position?: 'top' | 'bottom' | 'left' | 'right'
   },

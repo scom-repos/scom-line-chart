@@ -16,14 +16,13 @@ import {
   IUISchema
 } from '@ijstech/components';
 import { ILineChartConfig, formatNumber, groupByCategory, extractUniqueTimes, concatUnique, groupArrayByKey, formatNumberByFormat, ILineChartOptions, isNumeric } from './global/index';
-import { chartStyle, containerStyle } from './index.css';
+import { chartStyle, containerStyle, textStyle } from './index.css';
 import assets from './assets';
 import configData from './data.json';
 import ScomChartDataSourceSetup, { ModeType, fetchContentByCID, callAPI, DataSource } from '@scom/scom-chart-data-source-setup';
 import { getBuilderSchema, getEmbedderSchema } from './formSchema';
 import ScomLineChartDataOptionsForm from './dataOptionsForm';
 const Theme = Styles.Theme.ThemeVars;
-const currentTheme = Styles.Theme.currentTheme;
 
 interface ScomLineChartElement extends ControlElement {
   lazyLoad?: boolean;
@@ -86,7 +85,15 @@ export default class ScomLineChart extends Module {
     return this.tag;
   }
 
-  private async setTag(value: any) {
+  private async setTag(value: any, fromParent?: boolean) {
+    if (fromParent) {
+      this.tag.parentFontColor = value.fontColor;
+      this.tag.parentCustomFontColor = value.customFontColor;
+      this.tag.parentBackgroundColor = value.backgroundColor;
+      this.tag.parentCustomBackgroundColor = value.customBackgoundColor;
+      this.onUpdateBlock();
+      return;
+    }
     const newValue = value || {};
     for (let prop in newValue) {
       if (newValue.hasOwnProperty(prop)) {
@@ -327,8 +334,9 @@ export default class ScomLineChart extends Module {
     if (this.chartContainer) {
       this.chartContainer.style.boxShadow = this.tag?.darkShadow ? '0 -2px 10px rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, 0.16) 0px 1px 4px';
     }
-    this.updateStyle('--text-primary', this.tag?.fontColor);
-    this.updateStyle('--background-main', this.tag?.backgroundColor);
+    const tags = this.tag || {};
+    this.updateStyle('--custom-text-color', tags.customFontColor ? tags.fontColor : tags.parentCustomFontColor ? tags.parentFontColor : '');
+    this.updateStyle('--custom-background-color', tags.customBackgroundColor ? tags.backgroundColor : tags.parentCustomBackgroundColor ? tags.parentBackgroundColor : '');
   }
 
   private onUpdateBlock() {
@@ -394,18 +402,23 @@ export default class ScomLineChart extends Module {
     this.lbDescription.visible = !!description;
     this.pnlChart.height = `calc(100% - ${this.vStackInfo.offsetHeight + 10}px)`;
     const { xColumn, yColumns, groupBy, seriesOptions, smooth, stacking, legend, showSymbol, showDataLabels, percentage, xAxis, yAxis } = options;
-    const { key, type } = xColumn;
+    const { key, type, timeFormat } = xColumn;
     let _legend = {
       show: legend?.show,
     }
-    if (legend?.position) {
-      _legend[legend.position] = 'auto';
-      if (['left', 'right'].includes(legend.position)) {
-        _legend['orient'] = 'vertical';
+    if (legend && legend.show) {
+      if (legend.position) {
+        _legend[legend.position] = 'auto';
+        if (['left', 'right'].includes(legend.position)) {
+          _legend['orient'] = 'vertical';
+        }
       }
-    }
-    if (legend?.scroll) {
-      _legend['type'] = 'scroll';
+      if (legend.scroll) {
+        _legend['type'] = 'scroll';
+      }
+      if (legend.fontColor) {
+        _legend['textStyle'] = { color: legend.fontColor };
+      }
     }
     let _series = [];
     let arr = this.chartData;
@@ -417,7 +430,7 @@ export default class ScomLineChart extends Module {
       const keys = Object.keys(group);
       keys.map(v => {
         const _data = concatUnique(times, group[v]);
-        groupData[v] = groupArrayByKey(Object.keys(_data).map(m => [type === 'time' ? new Date(m) : m, _data[m]]));
+        groupData[v] = groupArrayByKey(Object.keys(_data).map(m => [type === 'time' ? moment(m, timeFormat).toDate() : m, _data[m]]));
       });
       const isPercentage = percentage && groupData[keys[0]] && isNumeric(groupData[keys[0]][0][1]);
       _series = keys.map(v => {
@@ -460,7 +473,7 @@ export default class ScomLineChart extends Module {
         if (isPercentage && !isNumeric(arr[0][col])) {
           isPercentage = false;
         }
-        groupData[col] = groupArrayByKey(arr.map(v => [type === 'time' ? new Date(v[key]) : col, v[col]]));
+        groupData[col] = groupArrayByKey(arr.map(v => [type === 'time' ? moment(v[key], timeFormat).toDate() : col, v[col]]));
       });
       _series = yColumns.map((col) => {
         let _data = [];
@@ -560,10 +573,12 @@ export default class ScomLineChart extends Module {
         nameLocation: 'center',
         nameGap: xAxis?.title ? 25 : 15,
         nameTextStyle: {
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          color: xAxis?.fontColor
         },
         axisLabel: {
           fontSize: 10,
+          color: xAxis?.fontColor,
           hideOverlap: true,
           formatter: xAxis?.tickFormat ? (value: number, index: number) => {
             if (type === 'time') {
@@ -581,7 +596,8 @@ export default class ScomLineChart extends Module {
         nameLocation: 'center',
         nameGap: yAxis?.title ? 40 : 15,
         nameTextStyle: {
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          color: yAxis?.fontColor
         },
         position: yAxis?.position || 'left',
         min: isSingle ? min : undefined,
@@ -591,6 +607,7 @@ export default class ScomLineChart extends Module {
           showMinLabel: false,
           showMaxLabel: false,
           fontSize: 10,
+          color: yAxis?.fontColor,
           position: 'end',
           formatter: (value: number, index: number) => {
             return formatNumber(value, { format: yAxis?.tickFormat, decimals: 2, percentValues: percentage })
@@ -621,14 +638,9 @@ export default class ScomLineChart extends Module {
     super.init();
     this.updateTheme();
     this.setTag({
-      fontColor: currentTheme.text.primary,
-      backgroundColor: currentTheme.background.main,
       darkShadow: false,
       height: 500
     })
-    // const { width, height, darkShadow } = this.tag || {};
-    // this.width = width || 700;
-    // this.height = height || 500;
     this.maxWidth = '100%';
     this.chartContainer.style.boxShadow = 'rgba(0, 0, 0, 0.16) 0px 1px 4px';
     this.classList.add(chartStyle);
@@ -653,7 +665,6 @@ export default class ScomLineChart extends Module {
       <i-vstack
         id="chartContainer"
         position="relative"
-        background={{ color: Theme.background.main }}
         height="100%"
         padding={{ top: 10, bottom: 10, left: 10, right: 10 }}
         class={containerStyle}
@@ -673,8 +684,8 @@ export default class ScomLineChart extends Module {
           margin={{ left: 'auto', right: 'auto', bottom: 10 }}
           verticalAlignment="center"
         >
-          <i-label id="lbTitle" font={{ bold: true, color: Theme.text.primary }} />
-          <i-label id="lbDescription" margin={{ top: 5 }} font={{ color: Theme.text.primary }} />
+          <i-label id="lbTitle" font={{ bold: true }} class={textStyle} />
+          <i-label id="lbDescription" margin={{ top: 5 }} class={textStyle} />
         </i-vstack>
         <i-panel id="pnlChart" width="100%" height="inherit" />
       </i-vstack>

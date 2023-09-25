@@ -6,6 +6,7 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
         xColumn?: {
             key: string;
             type: 'time' | 'category';
+            timeFormat?: string;
         };
         yColumns?: string[];
         groupBy?: string;
@@ -17,11 +18,13 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
         stacking?: boolean;
         xAxis?: {
             title?: string;
+            fontColor?: string;
             tickFormat?: string;
             reverseValues?: boolean;
         };
         yAxis?: {
             title?: string;
+            fontColor?: string;
             tickFormat?: string;
             labelFormat?: string;
             position?: 'left' | 'right';
@@ -29,6 +32,7 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
         smooth?: boolean;
         legend?: {
             show?: boolean;
+            fontColor?: string;
             scroll?: boolean;
             position?: 'top' | 'bottom' | 'left' | 'right';
         };
@@ -89,6 +93,7 @@ declare module "@scom/scom-line-chart/global/index.ts" {
 /// <amd-module name="@scom/scom-line-chart/index.css.ts" />
 declare module "@scom/scom-line-chart/index.css.ts" {
     export const containerStyle: string;
+    export const textStyle: string;
     export const chartStyle: string;
 }
 /// <amd-module name="@scom/scom-line-chart/assets.ts" />
@@ -140,9 +145,15 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                 darkShadow: {
                     type: string;
                 };
+                customFontColor: {
+                    type: string;
+                };
                 fontColor: {
                     type: string;
                     format: string;
+                };
+                customBackgroundColor: {
+                    type: string;
                 };
                 backgroundColor: {
                     type: string;
@@ -161,7 +172,33 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
         };
         uiSchema: {
             type: string;
-            elements: {
+            elements: ({
+                type: string;
+                label: string;
+                elements: {
+                    type: string;
+                    elements: {
+                        type: string;
+                        elements: ({
+                            type: string;
+                            scope: string;
+                            rule?: undefined;
+                        } | {
+                            type: string;
+                            scope: string;
+                            rule: {
+                                effect: string;
+                                condition: {
+                                    scope: string;
+                                    schema: {
+                                        const: boolean;
+                                    };
+                                };
+                            };
+                        })[];
+                    }[];
+                }[];
+            } | {
                 type: string;
                 label: string;
                 elements: {
@@ -171,7 +208,7 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                         scope: string;
                     }[];
                 }[];
-            }[];
+            })[];
         };
         advanced: {
             dataSchema: {
@@ -195,6 +232,9 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                                         type: string;
                                         enum: string[];
                                         required: boolean;
+                                    };
+                                    timeFormat: {
+                                        type: string;
                                     };
                                 };
                             };
@@ -224,6 +264,10 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                                     show: {
                                         type: string;
                                     };
+                                    fontColor: {
+                                        type: string;
+                                        format: string;
+                                    };
                                     scroll: {
                                         type: string;
                                     };
@@ -248,6 +292,10 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                                     title: {
                                         type: string;
                                     };
+                                    fontColor: {
+                                        type: string;
+                                        format: string;
+                                    };
                                     tickFormat: {
                                         type: string;
                                     };
@@ -261,6 +309,10 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                                 properties: {
                                     title: {
                                         type: string;
+                                    };
+                                    fontColor: {
+                                        type: string;
+                                        format: string;
                                     };
                                     tickFormat: {
                                         type: string;
@@ -321,9 +373,15 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                 darkShadow: {
                     type: string;
                 };
+                customFontColor: {
+                    type: string;
+                };
                 fontColor: {
                     type: string;
                     format: string;
+                };
+                customBackgroundColor: {
+                    type: string;
                 };
                 backgroundColor: {
                     type: string;
@@ -358,6 +416,9 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                                     enum: string[];
                                     required: boolean;
                                 };
+                                timeFormat: {
+                                    type: string;
+                                };
                             };
                         };
                         yColumns: {
@@ -386,6 +447,10 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                                 show: {
                                     type: string;
                                 };
+                                fontColor: {
+                                    type: string;
+                                    format: string;
+                                };
                                 scroll: {
                                     type: string;
                                 };
@@ -410,6 +475,10 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                                 title: {
                                     type: string;
                                 };
+                                fontColor: {
+                                    type: string;
+                                    format: string;
+                                };
                                 tickFormat: {
                                     type: string;
                                 };
@@ -423,6 +492,10 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                             properties: {
                                 title: {
                                     type: string;
+                                };
+                                fontColor: {
+                                    type: string;
+                                    format: string;
                                 };
                                 tickFormat: {
                                     type: string;
@@ -461,7 +534,33 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
         };
         uiSchema: {
             type: string;
-            elements: {
+            elements: ({
+                type: string;
+                label: string;
+                elements: {
+                    type: string;
+                    elements: {
+                        type: string;
+                        elements: ({
+                            type: string;
+                            scope: string;
+                            rule?: undefined;
+                        } | {
+                            type: string;
+                            scope: string;
+                            rule: {
+                                effect: string;
+                                condition: {
+                                    scope: string;
+                                    schema: {
+                                        const: boolean;
+                                    };
+                                };
+                            };
+                        })[];
+                    }[];
+                }[];
+            } | {
                 type: string;
                 label: string;
                 elements: {
@@ -484,7 +583,7 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                         scope?: undefined;
                     })[];
                 }[];
-            }[];
+            })[];
         };
     };
 }
