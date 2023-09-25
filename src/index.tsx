@@ -401,7 +401,7 @@ export default class ScomLineChart extends Module {
     this.lbDescription.caption = description;
     this.lbDescription.visible = !!description;
     this.pnlChart.height = `calc(100% - ${this.vStackInfo.offsetHeight + 10}px)`;
-    const { xColumn, yColumns, groupBy, seriesOptions, smooth, stacking, legend, showSymbol, showDataLabels, percentage, xAxis, yAxis } = options;
+    const { xColumn, yColumns, groupBy, seriesOptions, smooth, mergeDuplicateData, stacking, legend, showSymbol, showDataLabels, percentage, xAxis, yAxis } = options;
     const { key, type, timeFormat } = xColumn;
     let _legend = {
       show: legend?.show,
@@ -430,7 +430,7 @@ export default class ScomLineChart extends Module {
       const keys = Object.keys(group);
       keys.map(v => {
         const _data = concatUnique(times, group[v]);
-        groupData[v] = groupArrayByKey(Object.keys(_data).map(m => [type === 'time' ? moment(m, timeFormat).toDate() : m, _data[m]]));
+        groupData[v] = groupArrayByKey(Object.keys(_data).map(m => [type === 'time' ? moment(m, timeFormat).toDate() : m, _data[m]]), mergeDuplicateData);
       });
       const isPercentage = percentage && groupData[keys[0]] && isNumeric(groupData[keys[0]][0][1]);
       _series = keys.map(v => {
@@ -473,7 +473,7 @@ export default class ScomLineChart extends Module {
         if (isPercentage && !isNumeric(arr[0][col])) {
           isPercentage = false;
         }
-        groupData[col] = groupArrayByKey(arr.map(v => [type === 'time' ? moment(v[key], timeFormat).toDate() : col, v[col]]));
+        groupData[col] = groupArrayByKey(arr.map(v => [type === 'time' ? moment(v[key], timeFormat).toDate() : col, v[col]]), mergeDuplicateData);
       });
       _series = yColumns.map((col) => {
         let _data = [];
@@ -509,19 +509,19 @@ export default class ScomLineChart extends Module {
         }
       });
     }
-    let min = 0, max = 0;
-    const isSingle = _series.length === 1;
-    if (isSingle) {
-      const arr = _series[0].data.filter(v => v[1] !== null).map(v => v[1]);
-      min = Math.min(...arr);
-      max = Math.max(...arr);
-      const step = (max - min) / 5;
-      min = min > step ? min - step : min;
-      max += step;
-    }
-    const minInterval = (max - min) / 4;
-    const power = Math.pow(10, Math.floor(Math.log10(minInterval)));
-    const roundedInterval = Math.ceil(minInterval / power) * power;
+    // let min = 0, max = 0;
+    // const isSingle = _series.length === 1;
+    // if (isSingle) {
+    //   const arr = _series[0].data.filter(v => v[1] !== null).map(v => v[1]);
+    //   min = Math.min(...arr);
+    //   max = Math.max(...arr);
+    //   const step = (max - min) / 5;
+    //   min = min > step ? min - step : min;
+    //   max += step;
+    // }
+    // const minInterval = (max - min) / 4;
+    // const power = Math.pow(10, Math.floor(Math.log10(minInterval)));
+    // const roundedInterval = Math.ceil(minInterval / power) * power;
     const _chartData: any = {
       tooltip: {
         trigger: 'axis',
@@ -600,12 +600,12 @@ export default class ScomLineChart extends Module {
           color: yAxis?.fontColor
         },
         position: yAxis?.position || 'left',
-        min: isSingle ? min : undefined,
-        max: isSingle ? max : undefined,
-        interval: isSingle ? roundedInterval : undefined,
+        // min: isSingle ? min : undefined,
+        // max: isSingle ? max : undefined,
+        // interval: isSingle ? roundedInterval : undefined,
         axisLabel: {
-          showMinLabel: false,
-          showMaxLabel: false,
+          // showMinLabel: false,
+          // showMaxLabel: false,
           fontSize: 10,
           color: yAxis?.fontColor,
           position: 'end',
