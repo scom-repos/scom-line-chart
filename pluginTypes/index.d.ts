@@ -29,6 +29,7 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
             labelFormat?: string;
             position?: 'left' | 'right';
         };
+        mergeDuplicateData?: boolean;
         smooth?: boolean;
         legend?: {
             show?: boolean;
@@ -68,7 +69,7 @@ declare module "@scom/scom-line-chart/global/utils.ts" {
         percentValues?: boolean;
     }) => any;
     export const formatNumberByFormat: (num: number, format: string, separators?: boolean) => any;
-    export const groupArrayByKey: (arr: [Date | string, string | number][]) => (string | number | Date)[][];
+    export const groupArrayByKey: (arr: [Date | string, string | number][], isMerged?: boolean) => (string | number | Date)[][];
     export const groupByCategory: (data: {
         [key: string]: any;
     }[], category: string, xAxis: string, yAxis: string) => {
@@ -250,6 +251,9 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                             groupBy: {
                                 type: string;
                                 enum: string[];
+                            };
+                            mergeDuplicateData: {
+                                type: string;
                             };
                             smooth: {
                                 type: string;
@@ -433,6 +437,9 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                         groupBy: {
                             type: string;
                             enum: string[];
+                        };
+                        mergeDuplicateData: {
+                            type: string;
                         };
                         smooth: {
                             type: string;

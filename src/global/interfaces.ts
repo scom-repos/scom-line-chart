@@ -28,6 +28,7 @@ export interface ILineChartOptions {
     labelFormat?: string,
     position?: 'left' | 'right'
   },
+  mergeDuplicateData?: boolean,
   smooth?: boolean,
   legend?: {
     show?: boolean,
