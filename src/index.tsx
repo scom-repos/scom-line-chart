@@ -565,6 +565,9 @@ export default class ScomLineChart extends Module {
         }
       },
       legend: _legend,
+      grid: {
+        containLabel: true
+      },
       xAxis: {
         type: type,
         boundaryGap: false,
