@@ -37,6 +37,12 @@ declare module "@scom/scom-line-chart/global/interfaces.ts" {
             scroll?: boolean;
             position?: 'top' | 'bottom' | 'left' | 'right';
         };
+        padding?: {
+            top?: number;
+            bottom?: number;
+            left?: number;
+            right?: number;
+        };
         showSymbol?: boolean;
         showDataLabels?: boolean;
         percentage?: boolean;
@@ -290,6 +296,24 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                             percentage: {
                                 type: string;
                             };
+                            padding: {
+                                type: string;
+                                title: string;
+                                properties: {
+                                    top: {
+                                        type: string;
+                                    };
+                                    bottom: {
+                                        type: string;
+                                    };
+                                    left: {
+                                        type: string;
+                                    };
+                                    right: {
+                                        type: string;
+                                    };
+                                };
+                            };
                             xAxis: {
                                 type: string;
                                 properties: {
@@ -475,6 +499,24 @@ declare module "@scom/scom-line-chart/formSchema.ts" {
                         };
                         percentage: {
                             type: string;
+                        };
+                        padding: {
+                            type: string;
+                            title: string;
+                            properties: {
+                                top: {
+                                    type: string;
+                                };
+                                bottom: {
+                                    type: string;
+                                };
+                                left: {
+                                    type: string;
+                                };
+                                right: {
+                                    type: string;
+                                };
+                            };
                         };
                         xAxis: {
                             type: string;
