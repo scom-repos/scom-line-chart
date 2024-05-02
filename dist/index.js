@@ -183,6 +183,7 @@ define("@scom/scom-line-chart/data.json.ts", ["require", "exports"], function (r
     exports.default = {
         defaultBuilderData: {
             // apiEndpoint: "/dune/query/2360905",
+            "mode": "Live",
             "dataSource": "Dune",
             "queryId": "2360905",
             title: 'ETH Withdrawals after Shanghai Unlock vs ETH price',
@@ -662,7 +663,820 @@ define("@scom/scom-line-chart/dataOptionsForm.tsx", ["require", "exports", "@ijs
     ], ScomLineChartDataOptionsForm);
     exports.default = ScomLineChartDataOptionsForm;
 });
-define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@scom/scom-line-chart/global/index.ts", "@scom/scom-line-chart/index.css.ts", "@scom/scom-line-chart/assets.ts", "@scom/scom-line-chart/data.json.ts", "@scom/scom-chart-data-source-setup", "@scom/scom-line-chart/formSchema.ts", "@scom/scom-line-chart/dataOptionsForm.tsx"], function (require, exports, components_5, index_1, index_css_1, assets_1, data_json_1, scom_chart_data_source_setup_1, formSchema_1, dataOptionsForm_1) {
+define("@scom/scom-line-chart/dts/index.ts", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    ///<amd-module name='@scom/scom-line-chart/dts/index.ts'/> 
+    exports.default = `/// <amd-module name="@scom/scom-line-chart/global/interfaces.ts" />
+declare module "@scom/scom-line-chart/global/interfaces.ts" {
+    import { BigNumber } from "@ijstech/eth-wallet";
+    import { ModeType } from "@scom/scom-chart-data-source-setup";
+    export interface ILineChartOptions {
+        xColumn?: {
+            key: string;
+            type: 'time' | 'category';
+            timeFormat?: string;
+        };
+        yColumns?: string[];
+        groupBy?: string;
+        seriesOptions?: {
+            key: string;
+            title?: string;
+            color?: string;
+        }[];
+        stacking?: boolean;
+        xAxis?: {
+            title?: string;
+            fontColor?: string;
+            tickFormat?: string;
+            reverseValues?: boolean;
+        };
+        yAxis?: {
+            title?: string;
+            fontColor?: string;
+            tickFormat?: string;
+            labelFormat?: string;
+            position?: 'left' | 'right';
+        };
+        mergeDuplicateData?: boolean;
+        smooth?: boolean;
+        legend?: {
+            show?: boolean;
+            fontColor?: string;
+            scroll?: boolean;
+            position?: 'top' | 'bottom' | 'left' | 'right';
+        };
+        padding?: {
+            top?: number;
+            bottom?: number;
+            left?: number;
+            right?: number;
+        };
+        showSymbol?: boolean;
+        showDataLabels?: boolean;
+        percentage?: boolean;
+    }
+    export interface ILineChartConfig {
+        dataSource: string;
+        queryId?: string;
+        apiEndpoint?: string;
+        title: string;
+        description?: string;
+        options: ILineChartOptions;
+        file?: {
+            cid?: string;
+            name?: string;
+        };
+        mode: ModeType;
+    }
+    export interface IFormatNumberOptions {
+        precision?: number;
+        roundingMode?: BigNumber.RoundingMode;
+    }
+}
+/// <amd-module name="@scom/scom-line-chart/global/utils.ts" />
+declare module "@scom/scom-line-chart/global/utils.ts" {
+    import { BigNumber } from '@ijstech/eth-wallet';
+    export const isNumeric: (value: string | number | BigNumber) => boolean;
+    export const formatNumber: (num: number, options?: {
+        format?: string;
+        decimals?: number;
+        percentValues?: boolean;
+    }) => any;
+    export const formatNumberByFormat: (num: number, format: string, separators?: boolean) => any;
+    export const groupArrayByKey: (arr: [Date | string, string | number][], isMerged?: boolean) => (string | number | Date)[][];
+    export const groupByCategory: (data: {
+        [key: string]: any;
+    }[], category: string, xAxis: string, yAxis: string) => {
+        [key: string]: any;
+    };
+    export const extractUniqueTimes: (data: {
+        [key: string]: any;
+    }[], keyValue: string) => {
+        [key: string]: any;
+    };
+    export const concatUnique: (obj1: {
+        [key: string]: any;
+    }, obj2: {
+        [key: string]: any;
+    }) => {};
+}
+/// <amd-module name="@scom/scom-line-chart/global/index.ts" />
+declare module "@scom/scom-line-chart/global/index.ts" {
+    export * from "@scom/scom-line-chart/global/interfaces.ts";
+    export * from "@scom/scom-line-chart/global/utils.ts";
+}
+/// <amd-module name="@scom/scom-line-chart/index.css.ts" />
+declare module "@scom/scom-line-chart/index.css.ts" {
+    export const containerStyle: string;
+    export const textStyle: string;
+    export const chartStyle: string;
+}
+/// <amd-module name="@scom/scom-line-chart/assets.ts" />
+declare module "@scom/scom-line-chart/assets.ts" {
+    function fullPath(path: string): string;
+    const _default: {
+        fullPath: typeof fullPath;
+    };
+    export default _default;
+}
+/// <amd-module name="@scom/scom-line-chart/data.json.ts" />
+declare module "@scom/scom-line-chart/data.json.ts" {
+    const _default_1: {
+        defaultBuilderData: {
+            dataSource: string;
+            queryId: string;
+            title: string;
+            options: {
+                xColumn: {
+                    key: string;
+                    type: string;
+                };
+                yColumns: string[];
+                seriesOptions: {
+                    key: string;
+                    title: string;
+                    color: string;
+                }[];
+                xAxis: {
+                    title: string;
+                    tickFormat: string;
+                };
+                yAxis: {
+                    labelFormat: string;
+                    position: string;
+                };
+            };
+        };
+    };
+    export default _default_1;
+}
+/// <amd-module name="@scom/scom-line-chart/formSchema.ts" />
+declare module "@scom/scom-line-chart/formSchema.ts" {
+    export function getBuilderSchema(columns: string[]): {
+        dataSchema: {
+            type: string;
+            required: string[];
+            properties: {
+                darkShadow: {
+                    type: string;
+                };
+                customFontColor: {
+                    type: string;
+                };
+                fontColor: {
+                    type: string;
+                    format: string;
+                };
+                customBackgroundColor: {
+                    type: string;
+                };
+                backgroundColor: {
+                    type: string;
+                    format: string;
+                };
+                height: {
+                    type: string;
+                };
+                title: {
+                    type: string;
+                };
+                description: {
+                    type: string;
+                };
+            };
+        };
+        uiSchema: {
+            type: string;
+            elements: ({
+                type: string;
+                label: string;
+                elements: {
+                    type: string;
+                    elements: {
+                        type: string;
+                        elements: ({
+                            type: string;
+                            scope: string;
+                            rule?: undefined;
+                        } | {
+                            type: string;
+                            scope: string;
+                            rule: {
+                                effect: string;
+                                condition: {
+                                    scope: string;
+                                    schema: {
+                                        const: boolean;
+                                    };
+                                };
+                            };
+                        })[];
+                    }[];
+                }[];
+            } | {
+                type: string;
+                label: string;
+                elements: {
+                    type: string;
+                    elements: {
+                        type: string;
+                        scope: string;
+                    }[];
+                }[];
+            })[];
+        };
+        advanced: {
+            dataSchema: {
+                type: string;
+                properties: {
+                    options: {
+                        type: string;
+                        title: string;
+                        properties: {
+                            xColumn: {
+                                type: string;
+                                title: string;
+                                required: boolean;
+                                properties: {
+                                    key: {
+                                        type: string;
+                                        enum: string[];
+                                        required: boolean;
+                                    };
+                                    type: {
+                                        type: string;
+                                        enum: string[];
+                                        required: boolean;
+                                    };
+                                    timeFormat: {
+                                        type: string;
+                                    };
+                                };
+                            };
+                            yColumns: {
+                                type: string;
+                                title: string;
+                                required: boolean;
+                                items: {
+                                    type: string;
+                                    enum: string[];
+                                };
+                            };
+                            groupBy: {
+                                type: string;
+                                enum: string[];
+                            };
+                            mergeDuplicateData: {
+                                type: string;
+                            };
+                            smooth: {
+                                type: string;
+                            };
+                            stacking: {
+                                type: string;
+                            };
+                            legend: {
+                                type: string;
+                                title: string;
+                                properties: {
+                                    show: {
+                                        type: string;
+                                    };
+                                    fontColor: {
+                                        type: string;
+                                        format: string;
+                                    };
+                                    scroll: {
+                                        type: string;
+                                    };
+                                    position: {
+                                        type: string;
+                                        enum: string[];
+                                    };
+                                };
+                            };
+                            showSymbol: {
+                                type: string;
+                            };
+                            showDataLabels: {
+                                type: string;
+                            };
+                            percentage: {
+                                type: string;
+                            };
+                            padding: {
+                                type: string;
+                                title: string;
+                                properties: {
+                                    top: {
+                                        type: string;
+                                    };
+                                    bottom: {
+                                        type: string;
+                                    };
+                                    left: {
+                                        type: string;
+                                    };
+                                    right: {
+                                        type: string;
+                                    };
+                                };
+                            };
+                            xAxis: {
+                                type: string;
+                                properties: {
+                                    title: {
+                                        type: string;
+                                    };
+                                    fontColor: {
+                                        type: string;
+                                        format: string;
+                                    };
+                                    tickFormat: {
+                                        type: string;
+                                    };
+                                    reverseValues: {
+                                        type: string;
+                                    };
+                                };
+                            };
+                            yAxis: {
+                                type: string;
+                                properties: {
+                                    title: {
+                                        type: string;
+                                    };
+                                    fontColor: {
+                                        type: string;
+                                        format: string;
+                                    };
+                                    tickFormat: {
+                                        type: string;
+                                    };
+                                    labelFormat: {
+                                        type: string;
+                                    };
+                                    position: {
+                                        type: string;
+                                        enum: string[];
+                                    };
+                                };
+                            };
+                            seriesOptions: {
+                                type: string;
+                                items: {
+                                    type: string;
+                                    properties: {
+                                        key: {
+                                            type: string;
+                                            required: boolean;
+                                        };
+                                        title: {
+                                            type: string;
+                                        };
+                                        color: {
+                                            type: string;
+                                            format: string;
+                                        };
+                                    };
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+            uiSchema: {
+                type: string;
+                elements: {
+                    type: string;
+                    elements: {
+                        type: string;
+                        scope: string;
+                        options: {
+                            detail: {
+                                type: string;
+                            };
+                        };
+                    }[];
+                }[];
+            };
+        };
+    };
+    export function getEmbedderSchema(columns: string[]): {
+        dataSchema: {
+            type: string;
+            properties: {
+                darkShadow: {
+                    type: string;
+                };
+                customFontColor: {
+                    type: string;
+                };
+                fontColor: {
+                    type: string;
+                    format: string;
+                };
+                customBackgroundColor: {
+                    type: string;
+                };
+                backgroundColor: {
+                    type: string;
+                    format: string;
+                };
+                height: {
+                    type: string;
+                };
+                title: {
+                    type: string;
+                    required: boolean;
+                };
+                description: {
+                    type: string;
+                };
+                options: {
+                    type: string;
+                    title: string;
+                    properties: {
+                        xColumn: {
+                            type: string;
+                            title: string;
+                            required: boolean;
+                            properties: {
+                                key: {
+                                    type: string;
+                                    enum: string[];
+                                    required: boolean;
+                                };
+                                type: {
+                                    type: string;
+                                    enum: string[];
+                                    required: boolean;
+                                };
+                                timeFormat: {
+                                    type: string;
+                                };
+                            };
+                        };
+                        yColumns: {
+                            type: string;
+                            title: string;
+                            required: boolean;
+                            items: {
+                                type: string;
+                                enum: string[];
+                            };
+                        };
+                        groupBy: {
+                            type: string;
+                            enum: string[];
+                        };
+                        mergeDuplicateData: {
+                            type: string;
+                        };
+                        smooth: {
+                            type: string;
+                        };
+                        stacking: {
+                            type: string;
+                        };
+                        legend: {
+                            type: string;
+                            title: string;
+                            properties: {
+                                show: {
+                                    type: string;
+                                };
+                                fontColor: {
+                                    type: string;
+                                    format: string;
+                                };
+                                scroll: {
+                                    type: string;
+                                };
+                                position: {
+                                    type: string;
+                                    enum: string[];
+                                };
+                            };
+                        };
+                        showSymbol: {
+                            type: string;
+                        };
+                        showDataLabels: {
+                            type: string;
+                        };
+                        percentage: {
+                            type: string;
+                        };
+                        padding: {
+                            type: string;
+                            title: string;
+                            properties: {
+                                top: {
+                                    type: string;
+                                };
+                                bottom: {
+                                    type: string;
+                                };
+                                left: {
+                                    type: string;
+                                };
+                                right: {
+                                    type: string;
+                                };
+                            };
+                        };
+                        xAxis: {
+                            type: string;
+                            properties: {
+                                title: {
+                                    type: string;
+                                };
+                                fontColor: {
+                                    type: string;
+                                    format: string;
+                                };
+                                tickFormat: {
+                                    type: string;
+                                };
+                                reverseValues: {
+                                    type: string;
+                                };
+                            };
+                        };
+                        yAxis: {
+                            type: string;
+                            properties: {
+                                title: {
+                                    type: string;
+                                };
+                                fontColor: {
+                                    type: string;
+                                    format: string;
+                                };
+                                tickFormat: {
+                                    type: string;
+                                };
+                                labelFormat: {
+                                    type: string;
+                                };
+                                position: {
+                                    type: string;
+                                    enum: string[];
+                                };
+                            };
+                        };
+                        seriesOptions: {
+                            type: string;
+                            items: {
+                                type: string;
+                                properties: {
+                                    key: {
+                                        type: string;
+                                        required: boolean;
+                                    };
+                                    title: {
+                                        type: string;
+                                    };
+                                    color: {
+                                        type: string;
+                                        format: string;
+                                    };
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        };
+        uiSchema: {
+            type: string;
+            elements: ({
+                type: string;
+                label: string;
+                elements: {
+                    type: string;
+                    elements: {
+                        type: string;
+                        elements: ({
+                            type: string;
+                            scope: string;
+                            rule?: undefined;
+                        } | {
+                            type: string;
+                            scope: string;
+                            rule: {
+                                effect: string;
+                                condition: {
+                                    scope: string;
+                                    schema: {
+                                        const: boolean;
+                                    };
+                                };
+                            };
+                        })[];
+                    }[];
+                }[];
+            } | {
+                type: string;
+                label: string;
+                elements: {
+                    type: string;
+                    elements: ({
+                        type: string;
+                        scope: string;
+                        elements?: undefined;
+                    } | {
+                        type: string;
+                        elements: {
+                            type: string;
+                            scope: string;
+                            options: {
+                                detail: {
+                                    type: string;
+                                };
+                            };
+                        }[];
+                        scope?: undefined;
+                    })[];
+                }[];
+            })[];
+        };
+    };
+}
+/// <amd-module name="@scom/scom-line-chart/dataOptionsForm.tsx" />
+declare module "@scom/scom-line-chart/dataOptionsForm.tsx" {
+    import { Module, ControlElement, Container } from '@ijstech/components';
+    interface IData {
+        options: any;
+    }
+    interface ScomLineChartDataOptionsFormElement extends ControlElement {
+        dataSchema?: string;
+        uiSchema?: string;
+        options: any;
+    }
+    global {
+        namespace JSX {
+            interface IntrinsicElements {
+                ["i-scom-line-chart-data-options-form"]: ScomLineChartDataOptionsFormElement;
+            }
+        }
+    }
+    export default class ScomLineChartDataOptionsForm extends Module {
+        private formEl;
+        private _dataSchema;
+        private _uiSchema;
+        private _data;
+        constructor(parent?: Container, options?: any);
+        get data(): IData;
+        set data(value: IData);
+        refreshFormData(): Promise<IData>;
+        private renderUI;
+        private onInputChanged;
+        onCustomInputChanged(data: IData): Promise<void>;
+        init(): Promise<void>;
+        render(): any;
+    }
+}
+/// <amd-module name="@scom/scom-line-chart/dts/index.ts" />
+declare module "@scom/scom-line-chart/dts/index.ts" {
+    const _default_2: "";
+    export default _default_2;
+}
+/// <amd-module name="@scom/scom-line-chart" />
+declare module "@scom/scom-line-chart" {
+    import { Module, ControlElement, Container, IDataSchema, VStack, IUISchema, Modal } from '@ijstech/components';
+    import { ILineChartConfig } from "@scom/scom-line-chart/global/index.ts";
+    interface ScomLineChartElement extends ControlElement {
+        lazyLoad?: boolean;
+        data: ILineChartConfig;
+    }
+    global {
+        namespace JSX {
+            interface IntrinsicElements {
+                ['i-scom-line-chart']: ScomLineChartElement;
+            }
+        }
+    }
+    interface ICustomWidget {
+        showConfigurator: (parent: Modal, prop: string) => void;
+        register: () => {
+            types: string;
+            defaultData: string;
+        };
+    }
+    export default class ScomLineChart extends Module implements ICustomWidget {
+        private chartContainer;
+        private vStackInfo;
+        private pnlChart;
+        private loadingElm;
+        private lbTitle;
+        private lbDescription;
+        private columnNames;
+        private chartData;
+        private _data;
+        tag: any;
+        defaultEdit: boolean;
+        static create(options?: ScomLineChartElement, parent?: Container): Promise<ScomLineChart>;
+        constructor(parent?: Container, options?: ScomLineChartElement);
+        showConfigurator(parent: Modal, prop: string): void;
+        private onConfigSave;
+        register(): {
+            types: string;
+            defaultData: string;
+        };
+        private getData;
+        private setData;
+        private getTag;
+        private setTag;
+        private _getActions;
+        getConfigurators(): ({
+            name: string;
+            target: string;
+            getActions: () => ({
+                name: string;
+                icon: string;
+                command: (builder: any, userInputData: any) => {
+                    execute: () => Promise<void>;
+                    undo: () => void;
+                    redo: () => void;
+                };
+                userInputDataSchema: IDataSchema;
+                userInputUISchema: IUISchema;
+                customUI?: undefined;
+            } | {
+                name: string;
+                icon: string;
+                command: (builder: any, userInputData: any) => {
+                    execute: () => Promise<void>;
+                    undo: () => void;
+                    redo: () => void;
+                };
+                customUI: {
+                    render: (data?: any, onConfirm?: (result: boolean, data: any) => void, onChange?: (result: boolean, data: any) => void) => VStack;
+                };
+                userInputDataSchema?: undefined;
+                userInputUISchema?: undefined;
+            })[];
+            getData: any;
+            setData: (data: ILineChartConfig) => Promise<void>;
+            getTag: any;
+            setTag: any;
+            getLinkParams?: undefined;
+            setLinkParams?: undefined;
+        } | {
+            name: string;
+            target: string;
+            getActions: () => ({
+                name: string;
+                icon: string;
+                command: (builder: any, userInputData: any) => {
+                    execute: () => Promise<void>;
+                    undo: () => void;
+                    redo: () => void;
+                };
+                userInputDataSchema: IDataSchema;
+                userInputUISchema: IUISchema;
+                customUI?: undefined;
+            } | {
+                name: string;
+                icon: string;
+                command: (builder: any, userInputData: any) => {
+                    execute: () => Promise<void>;
+                    undo: () => void;
+                    redo: () => void;
+                };
+                customUI: {
+                    render: (data?: any, onConfirm?: (result: boolean, data: any) => void, onChange?: (result: boolean, data: any) => void) => VStack;
+                };
+                userInputDataSchema?: undefined;
+                userInputUISchema?: undefined;
+            })[];
+            getLinkParams: () => {
+                data: string;
+            };
+            setLinkParams: (params: any) => Promise<void>;
+            getData: any;
+            setData: any;
+            getTag: any;
+            setTag: any;
+        })[];
+        private updateStyle;
+        private updateTheme;
+        private onUpdateBlock;
+        private updateChartData;
+        private renderSnapshotData;
+        private renderLiveData;
+        private renderChart;
+        resize(): void;
+        init(): Promise<void>;
+        render(): any;
+    }
+}
+`;
+});
+define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@scom/scom-line-chart/global/index.ts", "@scom/scom-line-chart/index.css.ts", "@scom/scom-line-chart/assets.ts", "@scom/scom-line-chart/data.json.ts", "@scom/scom-chart-data-source-setup", "@scom/scom-line-chart/formSchema.ts", "@scom/scom-line-chart/dataOptionsForm.tsx", "@scom/scom-line-chart/dts/index.ts"], function (require, exports, components_5, index_1, index_css_1, assets_1, data_json_1, scom_chart_data_source_setup_1, formSchema_1, dataOptionsForm_1, index_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     const Theme = components_5.Styles.Theme.ThemeVars;
@@ -687,6 +1501,27 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
             this._data = DefaultData;
             this.tag = {};
             this.defaultEdit = true;
+        }
+        showConfigurator(parent, prop) {
+            const props = this._getDesignPropValue('data');
+            const builderTarget = this.getConfigurators().find((conf) => conf.target === 'Builders');
+            const dataAction = builderTarget?.getActions().find((action) => action.name === prop);
+            const self = this;
+            if (dataAction) {
+                const control = dataAction.customUI.render(props, (result, data) => {
+                    parent.visible = false;
+                    self.onConfigSave(data);
+                });
+                parent.item = control;
+                parent.visible = true;
+            }
+        }
+        onConfigSave(data) {
+            this._setDesignPropValue('data', data);
+            this.setData({ ...data });
+        }
+        register() {
+            return { types: index_2.default, defaultData: data_json_1.default.defaultBuilderData };
         }
         getData() {
             return this._data;
@@ -807,7 +1642,7 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
                         render: (data, onConfirm, onChange) => {
                             const vstack = new components_5.VStack(null, { gap: '1rem' });
                             const dataSourceSetup = new scom_chart_data_source_setup_1.default(null, {
-                                ...this._data,
+                                ...(data || this._data),
                                 chartData: JSON.stringify(this.chartData),
                                 onCustomDataChanged: async (dataSourceSetupData) => {
                                     if (onChange) {
@@ -825,13 +1660,14 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
                             const button = new components_5.Button(null, {
                                 caption: 'Confirm',
                                 width: 'auto',
+                                padding: { top: '0.5rem', bottom: '0.5rem', left: '1rem', right: '1rem' },
                                 height: 40,
                                 font: { color: Theme.colors.primary.contrastText }
                             });
                             hstackBtnConfirm.append(button);
                             vstack.append(dataSourceSetup);
                             const dataOptionsForm = new dataOptionsForm_1.default(null, {
-                                options: this._data.options,
+                                options: data?.options || this._data.options,
                                 dataSchema: JSON.stringify(advancedSchema),
                                 uiSchema: JSON.stringify(builderSchema.advanced.uiSchema)
                             });
@@ -840,7 +1676,7 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
                             if (onChange) {
                                 dataOptionsForm.onCustomInputChanged = async (optionsFormData) => {
                                     onChange(true, {
-                                        ...this._data,
+                                        ...(data || this._data),
                                         ...optionsFormData,
                                         ...dataSourceSetup.data
                                     });
@@ -855,7 +1691,7 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
                                 if (onConfirm) {
                                     const optionsFormData = await dataOptionsForm.refreshFormData();
                                     onConfirm(true, {
-                                        ...this._data,
+                                        ...(data || this._data),
                                         ...optionsFormData,
                                         ...dataSourceSetup.data
                                     });
@@ -1264,13 +2100,12 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
             chart.data = _chartData;
             chart.drawChart();
         }
-        resizeChart() {
+        resize() {
             if (this.pnlChart) {
                 this.pnlChart.firstChild?.resize();
             }
         }
         async init() {
-            this.isReadyCallbackQueued = true;
             super.init();
             this.updateTheme();
             this.setTag({
@@ -1287,11 +2122,10 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
                     this.setData(data);
                 }
             }
-            this.isReadyCallbackQueued = false;
             this.executeReadyCallback();
             window.addEventListener('resize', () => {
                 setTimeout(() => {
-                    this.resizeChart();
+                    this.resize();
                 }, 300);
             });
         }
@@ -1308,7 +2142,14 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
     };
     ScomLineChart = __decorate([
         components_5.customModule,
-        (0, components_5.customElements)('i-scom-line-chart')
+        (0, components_5.customElements)('i-scom-line-chart', {
+            icon: 'chart-line',
+            className: 'ScomLineChart',
+            props: {
+                data: { type: 'object' }
+            },
+            events: {}
+        })
     ], ScomLineChart);
     exports.default = ScomLineChart;
 });

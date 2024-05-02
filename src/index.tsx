@@ -13,7 +13,8 @@ import {
   LineChart,
   moment,
   Button,
-  IUISchema
+  IUISchema,
+  Modal
 } from '@ijstech/components';
 import { ILineChartConfig, formatNumber, groupByCategory, extractUniqueTimes, concatUnique, groupArrayByKey, formatNumberByFormat, ILineChartOptions, isNumeric } from './global/index';
 import { chartStyle, containerStyle, textStyle } from './index.css';
@@ -22,6 +23,7 @@ import configData from './data.json';
 import ScomChartDataSourceSetup, { ModeType, fetchContentByCID, callAPI, DataSource } from '@scom/scom-chart-data-source-setup';
 import { getBuilderSchema, getEmbedderSchema } from './formSchema';
 import ScomLineChartDataOptionsForm from './dataOptionsForm';
+import types from './dts/index';
 const Theme = Styles.Theme.ThemeVars;
 
 interface ScomLineChartElement extends ControlElement {
@@ -46,9 +48,21 @@ const DefaultData: ILineChartConfig = {
   mode: ModeType.LIVE
 };
 
+interface ICustomWidget {
+  showConfigurator: (parent: Modal, prop: string) => void;
+  register: () => { types: string; defaultData: ILineChartConfig };
+}
+
 @customModule
-@customElements('i-scom-line-chart')
-export default class ScomLineChart extends Module {
+@customElements('i-scom-line-chart', {
+  icon: 'chart-line',
+  className: 'ScomLineChart',
+  props: {
+    data: {type: 'object'}
+  },
+  events: {}
+})
+export default class ScomLineChart extends Module implements ICustomWidget {
   private chartContainer: VStack;
   private vStackInfo: HStack;
   private pnlChart: Panel;
@@ -70,6 +84,30 @@ export default class ScomLineChart extends Module {
 
   constructor(parent?: Container, options?: ScomLineChartElement) {
     super(parent, options);
+  }
+
+  showConfigurator(parent: Modal, prop: string) {
+    const props = this._getDesignPropValue('data');
+    const builderTarget = this.getConfigurators().find((conf: any) => conf.target === 'Builders');
+    const dataAction = builderTarget?.getActions().find((action: any) => action.name === prop);
+    const self = this;
+    if (dataAction) {
+      const control = dataAction.customUI.render(props, (result: boolean, data: any) => {
+        parent.visible = false;
+        self.onConfigSave(data);
+      })
+      parent.item = control;
+      parent.visible = true;
+    }
+  }
+
+  private onConfigSave(data: ILineChartConfig) {
+    this._setDesignPropValue('data', data);
+    this.setData({...data});
+  }
+
+  register() {
+    return { types, defaultData: configData.defaultBuilderData as ILineChartConfig };
   }
 
   private getData() {
@@ -188,7 +226,7 @@ export default class ScomLineChart extends Module {
           render: (data?: any, onConfirm?: (result: boolean, data: any) => void, onChange?: (result: boolean, data: any) => void) => {
             const vstack = new VStack(null, { gap: '1rem' });
             const dataSourceSetup = new ScomChartDataSourceSetup(null, {
-              ...this._data,
+              ...(data || this._data),
               chartData: JSON.stringify(this.chartData),
               onCustomDataChanged: async (dataSourceSetupData: any) => {
                 if (onChange) {
@@ -206,13 +244,14 @@ export default class ScomLineChart extends Module {
             const button = new Button(null, {
               caption: 'Confirm',
               width: 'auto',
+              padding: { top: '0.5rem', bottom: '0.5rem', left: '1rem', right: '1rem' },
               height: 40,
               font: { color: Theme.colors.primary.contrastText }
             });
             hstackBtnConfirm.append(button);
             vstack.append(dataSourceSetup);
             const dataOptionsForm = new ScomLineChartDataOptionsForm(null, {
-              options: this._data.options,
+              options: data?.options || this._data.options,
               dataSchema: JSON.stringify(advancedSchema),
               uiSchema: JSON.stringify(builderSchema.advanced.uiSchema)
             });
@@ -221,7 +260,7 @@ export default class ScomLineChart extends Module {
             if (onChange) {
               dataOptionsForm.onCustomInputChanged = async (optionsFormData: any) => {
                 onChange(true, {
-                  ...this._data,
+                  ...(data || this._data),
                   ...optionsFormData,
                   ...dataSourceSetup.data
                 });
@@ -234,7 +273,7 @@ export default class ScomLineChart extends Module {
               if (onConfirm) {
                 const optionsFormData = await dataOptionsForm.refreshFormData();
                 onConfirm(true, {
-                  ...this._data,
+                  ...(data || this._data),
                   ...optionsFormData,
                   ...dataSourceSetup.data
                 });
@@ -642,14 +681,13 @@ export default class ScomLineChart extends Module {
     chart.drawChart();
   }
 
-  private resizeChart() {
+  resize() {
     if (this.pnlChart) {
       (this.pnlChart.firstChild as LineChart)?.resize();
     }
   }
 
   async init() {
-    this.isReadyCallbackQueued = true;
     super.init();
     this.updateTheme();
     this.setTag({
@@ -666,11 +704,10 @@ export default class ScomLineChart extends Module {
         this.setData(data);
       }
     }
-    this.isReadyCallbackQueued = false;
     this.executeReadyCallback();
     window.addEventListener('resize', () => {
       setTimeout(() => {
-        this.resizeChart();
+        this.resize();
       }, 300);
     });
   }
