@@ -654,6 +654,7 @@ export default class ScomLineChart extends Module implements ICustomWidget {
           color: yAxis?.fontColor
         },
         position: yAxis?.position || 'left',
+        scale: true,
         // min: isSingle ? min : undefined,
         // max: isSingle ? max : undefined,
         // interval: isSingle ? roundedInterval : undefined,
