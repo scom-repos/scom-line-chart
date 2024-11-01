@@ -10,12 +10,12 @@ import {
   VStack,
   Styles,
   Panel,
-  LineChart,
   moment,
   Button,
   IUISchema,
   Modal
 } from '@ijstech/components';
+import { ScomCharts } from '@scom/scom-charts';
 import { ILineChartConfig, formatNumber, groupByCategory, extractUniqueTimes, concatUnique, groupArrayByKey, formatNumberByFormat, ILineChartOptions, isNumeric } from './global/index';
 import { chartStyle, containerStyle, textStyle } from './index.css';
 import assets from './assets';
@@ -74,7 +74,6 @@ export default class ScomLineChart extends Module implements ICustomWidget {
 
   private _data: ILineChartConfig = DefaultData;
   tag: any = {};
-  defaultEdit: boolean = true;
 
   static async create(options?: ScomLineChartElement, parent?: Container) {
     let self = new this(parent, options);
@@ -673,18 +672,18 @@ export default class ScomLineChart extends Module implements ICustomWidget {
       series: _series
     };
     this.pnlChart.clearInnerHTML();
-    const chart = new LineChart(this.pnlChart, {
+    const chart = new ScomCharts(this.pnlChart, {
       data: _chartData,
       width: '100%',
       height: '100%'
     });
-    chart.data = _chartData;
+    // chart.data = _chartData;
     chart.drawChart();
   }
 
   resize() {
     if (this.pnlChart) {
-      (this.pnlChart.firstChild as LineChart)?.resize();
+      (this.pnlChart.firstChild as ScomCharts)?.resize();
     }
   }
 
