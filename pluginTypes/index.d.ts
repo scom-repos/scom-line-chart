@@ -709,7 +709,6 @@ declare module "@scom/scom-line-chart" {
         private chartData;
         private _data;
         tag: any;
-        defaultEdit: boolean;
         static create(options?: ScomLineChartElement, parent?: Container): Promise<ScomLineChart>;
         constructor(parent?: Container, options?: ScomLineChartElement);
         showConfigurator(parent: Modal, prop: string): void;

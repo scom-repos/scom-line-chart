@@ -1501,7 +1501,6 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
             this.chartData = [];
             this._data = DefaultData;
             this.tag = {};
-            this.defaultEdit = true;
         }
         showConfigurator(parent, prop) {
             const props = this._getDesignPropValue('data');
@@ -2099,7 +2098,7 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
                 width: '100%',
                 height: '100%'
             });
-            chart.data = _chartData;
+            // chart.data = _chartData;
             chart.drawChart();
         }
         resize() {

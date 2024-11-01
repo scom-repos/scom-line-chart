@@ -74,7 +74,6 @@ export default class ScomLineChart extends Module implements ICustomWidget {
 
   private _data: ILineChartConfig = DefaultData;
   tag: any = {};
-  defaultEdit: boolean = true;
 
   static async create(options?: ScomLineChartElement, parent?: Container) {
     let self = new this(parent, options);
@@ -678,7 +677,7 @@ export default class ScomLineChart extends Module implements ICustomWidget {
       width: '100%',
       height: '100%'
     });
-    chart.data = _chartData;
+    // chart.data = _chartData;
     chart.drawChart();
   }
 
