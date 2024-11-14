@@ -1114,7 +1114,7 @@ declare module "@scom/scom-line-chart" {
                 };
             };
         };
-        getChartData(): {
+        getChartData(options?: ILineChartOptions): {
             chartData: any;
             defaulBuildertData: ILineChartConfig;
         };
