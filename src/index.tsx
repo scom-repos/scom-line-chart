@@ -62,8 +62,8 @@ export default class ScomLineChart extends ScomCharts<ILineChartOptions> impleme
     }
   }
 
-  getChartData() {
-    const { options } = this.model.getData();
+  getChartData(options?: ILineChartOptions) {
+    if (!options) return;
     const { xColumn, yColumns, groupBy, seriesOptions, smooth, mergeDuplicateData, stacking, legend, showSymbol, showDataLabels, percentage, xAxis, yAxis, padding = {} } = options;
     const { key, type, timeFormat } = xColumn;
     let _legend = {

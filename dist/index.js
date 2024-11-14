@@ -1576,8 +1576,9 @@ define("@scom/scom-line-chart", ["require", "exports", "@ijstech/components", "@
                 embededSchema: (0, formSchema_1.getEmbedderSchema)(columns)
             };
         }
-        getChartData() {
-            const { options } = this.model.getData();
+        getChartData(options) {
+            if (!options)
+                return;
             const { xColumn, yColumns, groupBy, seriesOptions, smooth, mergeDuplicateData, stacking, legend, showSymbol, showDataLabels, percentage, xAxis, yAxis, padding = {} } = options;
             const { key, type, timeFormat } = xColumn;
             let _legend = {
